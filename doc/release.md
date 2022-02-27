@@ -20,21 +20,25 @@ git commit -am "Move back to a dev version following X.Y.Z release"
 5. Open a merge request with the two commits (no one can push directly on `main`)
 6. After the merge recover the merged commits and tag the first one (the version should
    be `X.Y.Z`) as `vX.Y.Z`
-7. Push the tag
+7. Push the tag, push a `X.Y` branch
 8. Go to GitHub, click on "Releases" then on the `vX.Y.Z` tag, choose edit tag, and copy
    past the changelog in the description. This will trigger the release to pypi.
 
 ## Post release
 
-### Merge tags in main for pre-commit
+### Backport fixes from main
 
-If the tag you just made is not part of the main branch, merge the tag `vX.Y.Z` in the
-main branch by doing a history only merge. It's done in order to signal that this is an
-official release tag, and for `pre-commit autoupdate` to works.
+When a crash or a bug is fixed on the main branch, and it needs backport, make sure that
+the changelog is for the patch version `X.Y-1.Z'` then after the PR is merged
+cherry-pick the commit on the `X.Y-1` branch and do a release for `X.Y-1.Z`.
+
+The tag you just made is not part of the main branch, so you need to merge the tag
+`vX.Y-1.Z` in the main branch by doing a history only merge. It's done in order to
+signal that this is an official release tag, and for `pre-commit autoupdate` to works.
 
 ```bash
 git checkout main
-git merge --no-edit --strategy=ours vX.Y.Z
+git merge --no-edit --strategy=ours vX.Y-1.Z
 git push
 ```
 
